@@ -8,20 +8,58 @@ def do_sum():
         lambda n, sigma: print(n, sigma, 1 / n) if n % 100000 == 0 else None,
         10000000000,
         np.float)
+    print('------------------------')
 
 
 def do_choleskey():
     print('2.2 Cholesky')
     n = 10
     A = hilbert(n)
+
     x = np.ones(n, dtype='double')
     b = np.dot(A, x)
     x1 = cho_solve(A, b)
+
     r = b - np.dot(A, x1)
     delta_x = x - x1
     result1 = np.max(r)
     result2 = np.max(delta_x)
     print('r_max %g, delta_x_max %g' % (result1, result2))
+
+    b = np.dot(A, x) + 1e-7
+    x1 = cho_solve(A, b)
+
+    r = b - np.dot(A, x1)
+    delta_x = x - x1
+    result1 = np.max(r)
+    result2 = np.max(delta_x)
+    print('10^-7, r_max %g, delta_x_max %g' % (result1, result2))
+
+    n = 8
+    A = hilbert(n)
+    x = np.ones(n, dtype='double')
+    b = np.dot(A, x)
+    x1 = cho_solve(A, b)
+
+    r = b - np.dot(A, x1)
+    delta_x = x - x1
+    result1 = np.max(r)
+    result2 = np.max(delta_x)
+    print('n=8, r_max %g, delta_x_max %g' % (result1, result2))
+
+    n = 12
+    A = hilbert(n)
+    x = np.ones(n, dtype='double')
+    b = np.dot(A, x)
+    x1 = cho_solve(A, b)
+
+    r = b - np.dot(A, x1)
+    delta_x = x - x1
+    result1 = np.max(r)
+    result2 = np.max(delta_x)
+    print('n=12, r_max %g, delta_x_max %g' % (result1, result2))
+
+    print('--------------------------')
 
 
 def do_newton():
@@ -48,30 +86,40 @@ def do_newton():
         lambda k, la, y, y1, x, x1: print("(k, lambda, x, x1, delta_x) = (%d, %0.7f, %0.7f, %0.7f, %0.7f)" %
                                           (k, la, x, x1, abs(x1 - x))))
 
+    print('--------------------------')
+
 
 def do_iteration_solver():
+    print('iteration solver')
     n = 10
-    A = hilbert(n)
-    b = np.arange(1, n+1, dtype='double')
-    x0 = np.zeros(n)
     threshold = 1e-4
+
+    A = hilbert(n)
+    b = 1.0 / np.arange(1, n+1, dtype='double')
+    x0 = np.zeros(n)
     iteration_solver(
         A,
         b,
         x0,
         threshold,
-        lambda n, x, delta: print(n, np.linalg.norm(delta), x) if n % 10000 == 0 else None,
+        # lambda n, x, delta: print(n, np.linalg.norm(delta), x) if n % 1 == 0 else None,
+        lambda n, x, delta: None,
         method='sor',
         omega=1.25)
 
+    A = hilbert(n)
+    b = 1.0 / np.arange(1, n+1, dtype='double')
+    x0 = np.zeros(n)
     iteration_solver(
         A,
         b,
         x0,
         threshold,
-        lambda n, x, delta: print(n, np.linalg.norm(delta), x) if n % 1 == 0 else None,
+        lambda a, b, c: None,
+        # lambda n, x, delta: print(n, np.linalg.norm(delta), x) if n % 1 == 0 else None,
         method='jacobi',
         omega=1.25)
+    print('--------------------------')
 
 
 def do_power():
@@ -95,6 +143,7 @@ def do_power():
     power(A, x0, 1e-5,
           lambda i, x, lambda1, delta: print("(i, delta, lambda1, x) = (%d, %f, %f, %s)"
                                              % (i, delta, lambda1, str(x))))
+    print('--------------------------')
 
 
 def do_fitting():
@@ -108,6 +157,7 @@ def do_fitting():
     data1 = np.log(data)
     r, d = fitting(data1, 2)
     print("y = %f e^(%ft), \t\t\td = %f" % (np.exp(r[0]), np.exp(r[1]), d))
+    print('--------------------------')
 
 
 if __name__ == '__main__':
@@ -115,7 +165,7 @@ if __name__ == '__main__':
 
     # do_choleskey()
     # do_newton()
-    # do_iteration_solver()
+    do_iteration_solver()
     # do_power()
     # do_fitting()
 

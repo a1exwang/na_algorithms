@@ -94,16 +94,20 @@ def iteration_solver(A, b, x0, threshold, cb, method='jacobi', omega=1):
     n = list(np.shape(b))[0]
     if method == 'jacobi':
         while True:
-            y = np.array(x)
+            y = np.zeros(n, dtype='double')
             for i in range(n):
                 a = np.dot(A[i], x) - A[i, i] * x[i]
                 new_xi = (b[i] - a) / A[i, i]
                 y[i] = new_xi
-            if np.linalg.norm(y - x) <= threshold:
+            delta = np.linalg.norm(y - x)
+            if delta <= threshold:
                 break
-            x = y
+            if delta > 1e10:
+                break
             cb(iter_count, x, y - x)
+            x = y
             iter_count += 1
+        print('Total iter %d, delta %g' % (iter_count, delta))
         return x
     else:
         while True:
@@ -112,10 +116,12 @@ def iteration_solver(A, b, x0, threshold, cb, method='jacobi', omega=1):
                 a = np.dot(A[i], x) - A[i, i] * x[i]
                 new_xi = (1 - omega) * x[i] + omega * (b[i] - a) / A[i, i]
                 x[i] = new_xi
-            if np.linalg.norm(y - x) <= threshold:
+            delta = np.linalg.norm(y - x)
+            if delta <= threshold:
                 break
             cb(iter_count, x, y - x)
             iter_count += 1
+        print('Total iter %d, delta %g' % (iter_count, delta))
         return x
 
 
@@ -151,7 +157,6 @@ def fitting(pts, n):
         b[i] = np.dot(phi[i], pts[1])
 
     x = cho_solve(A, b)
-    # x = np.dot(np.linalg.inv(A), b)
 
     tt = 0
     for _ in range(list(np.shape(pts))[1]):
@@ -162,5 +167,3 @@ def fitting(pts, n):
         tt += np.linalg.norm(np.dot(A, x) - b) ** 2
     d = np.sqrt(tt / list(np.shape(pts))[1])
     return x, d
-
-
