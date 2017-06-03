@@ -1,4 +1,4 @@
-from libs import my_sum, newton, iteration_solver, hillbert, power, fitting
+from libs import my_sum, newton, iteration_solver, hilbert, power, fitting, cho_solve
 import numpy as np
 
 
@@ -8,6 +8,20 @@ def do_sum():
         lambda n, sigma: print(n, sigma, 1 / n) if n % 100000 == 0 else None,
         10000000000,
         np.float)
+
+
+def do_choleskey():
+    print('2.2 Cholesky')
+    n = 10
+    A = hilbert(n)
+    x = np.ones(n, dtype='double')
+    b = np.dot(A, x)
+    x1 = cho_solve(A, b)
+    r = b - np.dot(A, x1)
+    delta_x = x - x1
+    result1 = np.max(r)
+    result2 = np.max(delta_x)
+    print('r_max %g, delta_x_max %g' % (result1, result2))
 
 
 def do_newton():
@@ -37,7 +51,7 @@ def do_newton():
 
 def do_iteration_solver():
     n = 10
-    A = hillbert(n)
+    A = hilbert(n)
     b = np.arange(1, n+1, dtype='double')
     x0 = np.zeros(n)
     threshold = 1e-4
@@ -97,12 +111,13 @@ def do_fitting():
 
 
 if __name__ == '__main__':
+    pass
 
-    do_sum()
-    do_newton()
-    do_iteration_solver()
-    do_power()
-    do_fitting()
+    # do_choleskey()
+    # do_newton()
+    # do_iteration_solver()
+    # do_power()
+    # do_fitting()
 
 
 

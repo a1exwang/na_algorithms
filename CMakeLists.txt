@@ -1,0 +1,5 @@
+CMAKE_MINIMUM_REQUIRED (VERSION 2.8.11)
+
+PROJECT (na_algs)
+
+ADD_EXECUTABLE (main main.c)

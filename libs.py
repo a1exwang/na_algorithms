@@ -2,7 +2,46 @@ import math
 import numpy as np
 
 
-def hillbert(n):
+def cholensky(__A):
+    _A = np.array(__A)
+    # return np.linalg.cholesky(_A)
+    n = list(np.shape(_A))[0]
+    A = np.zeros([n, n], dtype='double')
+    for i in range(n):
+        for j in range(i+1):
+            A[i, j] = _A[i, j]
+    for j in range(n):
+        A[j, j] = np.sqrt(A[j, j] - np.linalg.norm(A[j, 0:j])**2)
+        for i in range(j+1, n):
+            tmp = 0
+            for k in range(j):
+                tmp += A[i, k] * A[j, k]
+            A[i, j] = (A[i, j] - tmp) / A[j, j]
+
+    return A
+
+
+def cho_solve(A, _b):
+    n = list(np.shape(A))[0]
+    b = np.array(_b)
+    L = cholensky(A)
+    Lt = np.transpose(L)
+
+    y = np.zeros(n, dtype='double')
+    for i in range(n):
+        for j in range(n - 1 - i):
+            b[i + j + 1] -= b[i] * L[i + j + 1, i] / L[i, i]
+        y[i] = b[i] / L[i, i]
+
+    x = np.zeros(n, dtype='double')
+    for i in range(n):
+        for j in range(n - 1 - i):
+            y[n - 1 - (i + j + 1)] -= y[n-1 - i] * Lt[n - 1 - (i + j + 1), n - 1 - i] / Lt[n - 1 - i, n - 1 - i]
+        x[n - 1 - i] = y[n - 1 - i] / Lt[n - 1 - i, n - 1 - i]
+    return x
+
+
+def hilbert(n):
     ret = np.zeros([n, n])
     for i in range(n):
         for j in range(n):
@@ -15,7 +54,7 @@ def my_sum(cb, max_count, dt):
     sigma = dt(0.0)
     n = dt(1.0)
     while True:
-        sigma1 = sigma + dt(1) / n
+        sigma1 = sigma + dt(1) / dt(n)
         cb(n, sigma)
         if sigma1 == sigma:
             break
@@ -111,7 +150,8 @@ def fitting(pts, n):
     for i in range(n):
         b[i] = np.dot(phi[i], pts[1])
 
-    x = np.dot(np.linalg.inv(A), b)
+    x = cho_solve(A, b)
+    # x = np.dot(np.linalg.inv(A), b)
 
     tt = 0
     for _ in range(list(np.shape(pts))[1]):
