@@ -90,7 +90,7 @@ def do_newton():
 
 
 def do_iteration_solver():
-    print('iteration solver')
+    print('Iteration solver')
     n = 10
     threshold = 1e-4
 
@@ -123,7 +123,7 @@ def do_iteration_solver():
 
 
 def do_power():
-    print("Ax = lambda x, what is lambda and x")
+    print("Power iteration, Ax = lambda x, what is lambda and x")
     A = np.array([
         [5, -4, 1],
         [-4, 6, -4],
@@ -147,6 +147,7 @@ def do_power():
 
 
 def do_fitting():
+    print('Fitting')
     data = np.array([
         [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8],
         [33.4, 79.5, 122.65, 159.05, 189.15, 214.15, 238.65, 252.2, 267.55, 280.5, 296.65, 301.65, 310.4, 318.15, 325.15]
@@ -163,11 +164,11 @@ def do_fitting():
 if __name__ == '__main__':
     pass
 
-    # do_choleskey()
-    # do_newton()
+    do_choleskey()
+    do_newton()
     do_iteration_solver()
-    # do_power()
-    # do_fitting()
+    do_power()
+    do_fitting()
 
 
 
