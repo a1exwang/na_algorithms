@@ -158,12 +158,14 @@ def fitting(pts, n):
 
     x = cho_solve(A, b)
 
-    tt = 0
-    for _ in range(list(np.shape(pts))[1]):
-        A = np.zeros((n, n), dtype='double')
-        for i in range(n):
-            for j in range(n):
-                A[i, j] = pts[0][i] * pts[0][j]
-        tt += np.linalg.norm(np.dot(A, x) - b) ** 2
-    d = np.sqrt(tt / list(np.shape(pts))[1])
-    return x, d
+    return x
+    #  tt = 0
+    # For each point
+    #  for _ in range(list(np.shape(pts))[1]):
+    #      A = np.zeros((n, n), dtype='double')
+    #      for i in range(n):
+    #          for j in range(n):
+    #              A[i, j] = pts[0][i] * pts[0][j]
+    #      tt += np.linalg.norm(np.dot(A, x) - b) ** 2
+    #  d = np.sqrt(tt / list(np.shape(pts))[1])
+    #  return x, d

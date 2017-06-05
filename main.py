@@ -152,12 +152,21 @@ def do_fitting():
         [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8],
         [33.4, 79.5, 122.65, 159.05, 189.15, 214.15, 238.65, 252.2, 267.55, 280.5, 296.65, 301.65, 310.4, 318.15, 325.15]
     ], dtype='double')
-    r, d = fitting(data, 3)
+    n = list(np.shape(data))[1]
+    x = np.reshape(data[0, :], [n])
+    y = np.reshape(data[1, :], [n])
+
+    r = fitting(data, 3)
+    f1 = lambda x: r[0] + r[1] * x + r[2] * x**2
+    d = np.linalg.norm(f1(x) - y) / np.sqrt(n)
     print("y = %f + %fx + %fx^2, \td = %f" %(r[0], r[1], r[2], d))
 
-    data1 = np.log(data)
-    r, d = fitting(data1, 2)
-    print("y = %f e^(%ft), \t\t\td = %f" % (np.exp(r[0]), np.exp(r[1]), d))
+    data1 = np.reshape([x, np.log(y)], [2, n])
+    r = fitting(data1, 2)
+    a, b = np.exp(r[0]), r[1]
+    f2 = lambda x: a * np.exp(b * x)
+    d = np.linalg.norm(f2(x) - y) / np.sqrt(n)
+    print("y = %f e^(%ft), \t\t\td = %f" % (a, b, d))
     print('--------------------------')
 
 
